@@ -1,5 +1,11 @@
 <?php
 
 return [
-    // table names for generating CRUD_DATA seeders.
+    'avenues',
+    'categories',
+    'clients',
+    'communes',
+    'factures',
+    'paiements',
+    'quartiers',
 ];
