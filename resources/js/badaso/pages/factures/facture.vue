@@ -93,7 +93,8 @@
                                 <vs-button v-if="selectedMode == 'recouvrement'" @click="payer(data[indextr])"
                                     type="filled">payer</vs-button>
 
-                                <vs-button v-if="selectedMode == 'dossier'" @click="getCleintByFacture(data[indextr].client_id)"
+                                <vs-button v-if="selectedMode == 'dossier'"
+                                    @click="getCleintByFacture(data[indextr].client_id)"
                                     type="filled">Fatures</vs-button>
                             </vs-td>
 
@@ -122,8 +123,12 @@
             </vs-prompt>
 
 
-            <vs-prompt  @close="annulerConsommation()" :active.sync="activePromptFactueres">
+            <vs-prompt @close="annulerConsommation()" :active.sync="activePromptFactueres">
                 <div class="con-exemple-prompt">
+
+                    <vs-avatar color="success" text="Payé" />
+                    <vs-avatar color="danger" text="Dette" />
+                    <vs-avatar color="warning" text="vide" />
 
                     <vs-table stripe :data="client_factures">
                         <template slot="header">
@@ -145,7 +150,8 @@
                         </template>
 
                         <template slot-scope="{data}">
-                            <vs-tr :key="indextr" v-for="(tr, indextr) in data">
+                            <vs-tr :state="getEtatColor(tr.etat)"
+                               :key="indextr" v-for="(tr, indextr) in data">
                                 <vs-td>
                                     {{ data[indextr].mois }} / {{ data[indextr].annee }}
                                 </vs-td>
@@ -192,7 +198,7 @@ export default {
         activePrompt: false,
         selectedClient: {},
         tmpConsomation: '',
-        activePromptFactueres:false
+        activePromptFactueres: false
     }),
     props: {
         idAvenue: 0,
@@ -310,6 +316,19 @@ export default {
                 this.$closeLoader();
             })
         },
+        getEtatColor(expression) {
+            switch (expression) {
+                case 'initial':
+                    return 'warning';
+
+                case 'payé':
+                    return 'success';
+
+                default:
+                    return 'danger';
+
+            }
+        },
         getDossierClient() {
 
         }
@@ -318,8 +337,6 @@ export default {
 
     computed: {
         getFactureByMode() {
-
-
             if (this.selectedMode === 'recouvrement') {
                 return this.factures.filter(f => f.etat == 'non_payé')
             } else if (this.selectedMode === 'Completion') {
